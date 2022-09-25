@@ -42,15 +42,19 @@ PKG_NAME := steamworks-swift
 INST_LIB_DIR := ${PREFIX}/lib/${PKG_NAME}
 INST_H_DIR := ${PREFIX}/include/${PKG_NAME}
 
-# No libs stuff in the pkgconfig because we expect to be used
+# No library names in the pkgconfig because we expect to be used
 # with modulemaps and there are multiple possible libraries.
+# (the -L is required because, even though the libraries are in
+# /usr/lib, Swift ignores that by default and looks in the toolchain
+# version of /usr/lib only...)
 
 define PKGCONFIG
 Name: ${PKG_NAME}
 Description: Steamworks API wrapper for Swift language
-URL: https://github.com/johnfairh/steamworks-swift
+URL: https://github.com/johnfairh/steamworks-swift-sdk
 Version: ${STEAM_SDK_VERSION}
 Cflags: -I${INST_H_DIR}
+Libs: -L${INST_LIB_DIR}
 endef
 export PKGCONFIG
 
@@ -76,7 +80,7 @@ uninstall:
 	rm -f ${PKGCONFIG_FILE}
 
 # Populate the 'redist' tree from a Steamworks SDK - this is for
-# maintaining the 
+# maintaining this redistribution.
 
 STEAM_SDK ?= ${CURDIR}/sdk
 
