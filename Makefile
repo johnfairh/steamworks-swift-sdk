@@ -86,10 +86,15 @@ STEAM_SDK ?= ${CURDIR}/sdk
 
 REDIST_ARCHS := osx win64 linux64
 
+# Filter out some headers
+ALL_HEADERS := $(notdir $(wildcard ${STEAM_SDK}/public/steam/*h))
+BAD_HEADERS := isteamdualsense.h
+GOOD_HEADERS := $(filter-out ${BAD_HEADERS},${ALL_HEADERS})
+
 redist:
 	rm -rf redist/*
 	mkdir -p redist/include/steam redist/lib
-	cp ${STEAM_SDK}/public/steam/*h redist/include/steam
+	cp $(addprefix ${STEAM_SDK}/public/steam/,${GOOD_HEADERS}) redist/include/steam
 	cp ${STEAM_SDK}/public/steam/*json redist/include/steam
 	cp ${STEAM_SDK}/Readme.txt redist/
 	for ARCH in ${REDIST_ARCHS} ; do \
