@@ -58,14 +58,18 @@ Libs: -L${INST_LIB_DIR}
 endef
 export PKGCONFIG
 
-PKGCONFIG_FILE := ${PREFIX}/lib/pkgconfig/${PKG_NAME}.pc
+PKGCONFIG_DIR := ${PREFIX}/lib/pkgconfig
+PKGCONFIG_FILE := ${PKGCONFIG_DIR}/${PKG_NAME}.pc
 
 install:
-	install -d ${INST_LIB_DIR} ${INST_H_DIR}
+	mkdir -p ${INST_LIB_DIR} ${INST_H_DIR} ${PKGCONFIG_DIR}
 	for LIB in $(notdir $(wildcard ${LOCAL_LIB_DIR}/*)) ; do \
 		install -vC ${LOCAL_LIB_DIR}/$${LIB} ${INST_LIB_DIR}; \
 		ln -sf ${INST_LIB_DIR}/$${LIB} ${PREFIX}/lib/$${LIB}; \
 	done
+ifeq (${PLATFORM},linux64)
+	ldconfig # we love you ldd
+endif
 	cp -fR ${LOCAL_INCLUDE_DIR}/* ${INST_H_DIR}
 	echo "$${PKGCONFIG}" > ${PKGCONFIG_FILE}
 
