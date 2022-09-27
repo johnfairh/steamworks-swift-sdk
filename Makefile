@@ -72,7 +72,7 @@ install:
 # Uninstall the SDK artifacts and pkg-config
 
 uninstall:
-	@for LIB in $(notdir $(wildcard ${INST_LIB_DIR}/*)) ; do \
+	for LIB in $(notdir $(wildcard ${INST_LIB_DIR}/*)) ; do \
 		rm -f ${PREFIX}/lib/$${LIB}; \
 	done
 	rm -rf ${INST_LIB_DIR}
