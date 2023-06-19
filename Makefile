@@ -14,7 +14,7 @@ PREFIX ?= /usr/local
 all:
 	@echo This Makefile installs or uninstalls Steamworks SDK files in a very
 	@echo unofficial way so you can use the steamworks-swift project module to
-	@echo write Steamworks API calls in Swift.  Use 'make install' if that really
+	@echo write Steamworks API calls in Swift.  Use \'make install\' if that really
 	@echo is what you want to do.
 
 # Only tested on macOS but show willing.  Good chance Linux will be OK.
@@ -61,12 +61,20 @@ export PKGCONFIG
 PKGCONFIG_DIR := ${PREFIX}/lib/pkgconfig
 PKGCONFIG_FILE := ${PKGCONFIG_DIR}/${PKG_NAME}.pc
 
+# Intentionally break the codesign to make development life easier -
+# another workaround for the lack of binary targets.
+
 install:
 	mkdir -p ${INST_LIB_DIR} ${INST_H_DIR} ${PKGCONFIG_DIR}
 	for LIB in $(notdir $(wildcard ${LOCAL_LIB_DIR}/*)) ; do \
 		install -vC ${LOCAL_LIB_DIR}/$${LIB} ${INST_LIB_DIR}; \
 		ln -sf ${INST_LIB_DIR}/$${LIB} ${PREFIX}/lib/$${LIB}; \
 	done
+ifeq (${PLATFORM},osx)
+	for LIB in $(notdir $(wildcard ${LOCAL_LIB_DIR}/*)) ; do \
+		install_name_tool -id ${INST_LIB_DIR}/$${LIB} ${PREFIX}/lib/$${LIB} 2>/dev/null; \
+	done
+endif
 ifeq (${PLATFORM},linux64)
 	ldconfig # we love you ldd
 endif
