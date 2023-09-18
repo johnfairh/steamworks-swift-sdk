@@ -5,7 +5,7 @@
 # `PREFIX=/opt make install` to install to /opt
 #
 
-STEAM_SDK_VERSION := 1.57
+STEAM_SDK_VERSION := 1.58
 
 PREFIX ?= /usr/local
 
