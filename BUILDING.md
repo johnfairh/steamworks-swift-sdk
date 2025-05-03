@@ -4,7 +4,7 @@ New Steamworks SDK
 * git diff to sanity check & review
 * update Makefile SDK version
 * make uninstall; make install
-* Go back to steamworks, make generate
+* Go back to steamworks, update EXPECTED_SDK, make generate
 * git diff to compare and explore, make patches, build etc.
 * On happy commit & tag & push -sdk
 * Update SDK level in Steamworks Readme
