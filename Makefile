@@ -61,8 +61,16 @@ export PKGCONFIG
 PKGCONFIG_DIR := ${PREFIX}/lib/pkgconfig
 PKGCONFIG_FILE := ${PKGCONFIG_DIR}/${PKG_NAME}.pc
 
-# Intentionally break the codesign to make development life easier -
-# another workaround for the lack of binary targets.
+# The LC_ID_DYLIB of libsteam_api.dylib is @loader_path/libsteam_api.dylib.
+#
+# This is incredibly unfriendly for SwiftPM who puts build products in
+# crazy places that don't exist until the build step.  In the future it might
+# support binary targets which would fix this.
+#
+# For now we rewrite the ID to its absolute path and then reset the code
+# signing.  This works great for development - to actually deploy something
+# you'd want to link against the kosher library and package it up with the
+# binary.
 
 install:
 	mkdir -p ${INST_LIB_DIR} ${INST_H_DIR} ${PKGCONFIG_DIR}
@@ -73,6 +81,7 @@ install:
 ifeq (${PLATFORM},osx)
 	for LIB in $(notdir $(wildcard ${LOCAL_LIB_DIR}/*)) ; do \
 		install_name_tool -id ${INST_LIB_DIR}/$${LIB} ${PREFIX}/lib/$${LIB} 2>/dev/null; \
+		codesign --force -s - ${PREFIX}/lib/$${LIB}; \
 	done
 endif
 ifeq (${PLATFORM},linux64)
