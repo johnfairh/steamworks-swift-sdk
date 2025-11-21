@@ -5,7 +5,7 @@
 # `PREFIX=/opt make install` to install to /opt
 #
 
-STEAM_SDK_VERSION := 1.62
+STEAM_SDK_VERSION := 1.63
 
 PREFIX ?= /usr/local
 
@@ -25,7 +25,11 @@ else
   ifeq ($(shell uname -s),Darwin)
     PLATFORM := osx
   else
-    PLATFORM := linux64
+    ifeq ($(shell uname -m),aarch64)
+      PLATFORM := linuxarm64
+    else
+      PLATFORM := linux64
+    endif
   endif
 endif
 
@@ -84,9 +88,7 @@ ifeq (${PLATFORM},osx)
 		codesign --force -s - ${PREFIX}/lib/$${LIB}; \
 	done
 endif
-ifeq (${PLATFORM},linux64)
-	ldconfig # we love you ldd
-endif
+	-ldconfig # we love you ldd
 	cp -fR ${LOCAL_INCLUDE_DIR}/* ${INST_H_DIR}
 	echo "$${PKGCONFIG}" > ${PKGCONFIG_FILE}
 
@@ -105,7 +107,7 @@ uninstall:
 
 STEAM_SDK ?= ${CURDIR}/sdk
 
-REDIST_ARCHS := osx win64 linux64
+REDIST_ARCHS := osx win64 linux64 linuxarm64
 
 # Filter out some headers
 ALL_HEADERS := $(notdir $(wildcard ${STEAM_SDK}/public/steam/*h))
